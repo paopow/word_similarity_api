@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jso
 from numpy import dot
 from numpy.linalg import norm
 import csv
