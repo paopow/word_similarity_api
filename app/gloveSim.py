@@ -1,10 +1,7 @@
 from utils import cossim
 import numpy as np
 from gensim.utils import lemmatize
-
-#TODO: put this in config file
-GLOVE_NAMES = '/Users/paopow/Data/iis-dev/Data/GloVe/6B.300d.names'
-GLOVE_VECS = '/Users/paopow/Data/iis-dev/Data/GloVe/6B.300d.npy'
+from config import GLOVE_NAMES, GLOVE_VECS
 
 def lemmatize_an_idea(idea, use_stoplist=True):
     if use_stoplist:
