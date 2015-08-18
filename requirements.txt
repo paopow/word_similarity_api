@@ -1,0 +1,12 @@
+Flask==0.10.1
+Jinja2==2.8
+MarkupSafe==0.23
+Unidecode==0.04.18
+Werkzeug==0.10.4
+cymem==1.11
+itsdangerous==0.24
+murmurhash==0.24
+numpy==1.9.2
+preshed==0.41
+spacy==0.89
+wsgiref==0.1.2
