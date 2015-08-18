@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from utils import read_csv
 from config import TOPICS
-# from spacySim import spacySim
+from spacySim import spacySim
 from gloveSim import gloveSim
 
 app = Flask(__name__)
