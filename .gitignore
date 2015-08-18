@@ -58,3 +58,4 @@ target/
 
 # Config file
 app/config.py
+app/Procfile
