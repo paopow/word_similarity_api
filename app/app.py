@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from utils import read_csv
+from utils import read_csv, lemmatize_an_idea
 import json
 from config import TOPICS
 from spacySim import spacySim, spacyPhraseSim
@@ -11,7 +11,7 @@ app = Flask(__name__)
 # --- Assume 1 word per line csv
 topics = {}
 for k,v in TOPICS.iteritems():
-    topics[k] = list(set([w[0].lower() for w in read_csv(v)]))
+    topics[k] = [(w[0], w[1].lower()) for w in read_csv(v)]
 
 
 @app.route('/spaCy/similarity', methods=['GET', 'POST'])
@@ -33,8 +33,9 @@ def get_glove_sim():
 
 
 def get_top15(word, vocab_list, func):
-    sim_vec = [(w, func(word,w)) for w in vocab_list]
-    sim_vec = sorted(sim_vec, key=lambda t: t[1])
+    sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
+        for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word))]
+    sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
     return jsonify(
             word = word,
             similar = [i for i in reversed(sim_vec[-15:])],
