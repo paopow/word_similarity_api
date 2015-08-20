@@ -1,0 +1,91 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<body>
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: 'http://127.0.0.1:5000/spaCy/similarity',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                data: JSON.stringify({
+                    words: [
+                        {'id': 'foo', 'text': 'cat'},
+                        {'id': 'bar', 'text': 'dog'}
+                    ]
+                }),
+                dataType: 'html',
+                success: function(json){
+                    $('#spacySim').html(JSON.stringify(json));
+                }
+
+            });
+
+            $.ajax({
+                url: 'http://127.0.0.1:5000/spaCy/top15/weddingProp',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                data: JSON.stringify({
+                    word: {'id': 'foo', 'text': 'cat'}
+                }),
+                dataType: 'html',
+                success: function(json){
+                    $('#spacyTop15').html(JSON.stringify(json));
+                }
+
+            });
+
+            $.ajax({
+                url: 'http://127.0.0.1:5000/GloVe/similarity',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                data: JSON.stringify({
+                    words: [
+                        {'id': 'foo', 'text': 'cat'},
+                        {'id': 'bar', 'text': 'dog'}
+                    ]
+                }),
+                dataType: 'html',
+                success: function(json){
+                    $('#gloveSim').html(JSON.stringify(json));
+                }
+
+            });
+
+            $.ajax({
+                url: 'http://127.0.0.1:5000/GloVe/top15/weddingProp',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                data: JSON.stringify({
+                    word: {'id': 'foo', 'text': 'cat'}
+                }),
+                dataType: 'html',
+                success: function(json){
+                    $('#gloveTop15').html(JSON.stringify(json));
+                }
+
+            });
+
+
+
+        });
+    </script>
+    <h1>spaCy</h1>
+        <h2>Similarity</h2>
+            <div id='spacySim'>
+            </div>
+        <h2>Top15</h2>
+            <div id='spacyTop15'>
+            </div>
+    <hr />
+    <h1>GloVe</h1>
+        <h2>Similarity</h2>
+            <div id='gloveSim'>
+            </div>
+        <h2>Top15</h2>
+            <div id='gloveTop15'>
+            </div>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from utils import read_csv
+import json
 from config import TOPICS
 from spacySim import spacySim
 from gloveSim import gloveSim
@@ -11,19 +12,25 @@ app = Flask(__name__)
 topics = {}
 for k,v in TOPICS.iteritems():
     topics[k] = list(set([w[0].lower() for w in read_csv(v)]))
-@app.route('/spaCy/similarity/<word1>/<word2>', methods=['GET'])
-def get_spacy_sim(word1, word2):
-    return jsonify(
-            word1 = word1,
-            word2 = word2,
-            similarity = spacySim(word1, word2))
 
-@app.route('/GloVe/similarity/<word1>/<word2>', methods=['GET'])
-def get_glove_sim(word1, word2):
+
+@app.route('/spaCy/similarity', methods=['GET', 'POST'])
+def get_spacy_sim():
+    data = request.get_json()
+    words = data['words']
     return jsonify(
-            word1 = word1,
-            word2 = word2,
-            similarity = gloveSim(word1, word2))
+            words = words,
+            similarity = spacySim(words[0]['text'], words[1]['text']))
+
+
+@app.route('/GloVe/similarity', methods=['GET', 'POST'])
+def get_glove_sim():
+    data = request.get_json()
+    words = data['words']
+    return jsonify(
+            words = words,
+            similarity = gloveSim(words[0]['text'], words[1]['text']))
+
 
 def get_top15(word, vocab_list, func):
     sim_vec = [(w, func(word,w)) for w in vocab_list]
@@ -33,13 +40,19 @@ def get_top15(word, vocab_list, func):
             similar = [i for i in reversed(sim_vec[-15:])],
             different = sim_vec[:15])
 
-@app.route('/spaCy/top15/<topic>/<word>', methods=['GET'])
-def get_spacy_top15(topic, word):
-    return get_top15(word, topics[topic], spacySim)
 
-@app.route('/GloVe/top15/<topic>/<word>', methods=['GET'])
-def get_glove_top15(topic, word):
-    return get_top15(word, topics[topic], gloveSim)
+@app.route('/spaCy/top15/<topic>', methods=['GET', 'POST'])
+def get_spacy_top15(topic):
+    data = request.get_json()
+    word = data['word']
+    return get_top15(word['text'], topics[topic], spacySim)
+
+
+@app.route('/GloVe/top15/<topic>', methods=['GET', 'POST'])
+def get_glove_top15(topic):
+    data = request.get_json()
+    word = data['word']
+    return get_top15(word['text'], topics[topic], gloveSim)
 
 
 if __name__ == '__main__':
