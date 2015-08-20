@@ -1,18 +1,7 @@
-from utils import cossim
+from utils import cossim, lemmatize_an_idea
 import numpy as np
-from gensim.utils import lemmatize
 from config import GLOVE_NAMES, GLOVE_VECS
 
-def lemmatize_an_idea(idea, use_stoplist=True):
-    if use_stoplist:
-        lemm = [lem[:-3] for lem in lemmatize(idea) if lem[:-3] not in stoplist]
-    else:
-        lemm = [lem[:-3] for lem in lemmatize(idea) if lem[:-3]]
-    return lemm
-
-def lemmatize_ideas(ideas):
-    lemms = [lemmatize_an_idea(raw) for raw in ideas]
-    return lemms
 
 
 class VectorSpace:
