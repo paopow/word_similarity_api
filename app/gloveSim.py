@@ -2,8 +2,6 @@ from utils import cossim, lemmatize_an_idea
 import numpy as np
 from config import GLOVE_NAMES, GLOVE_VECS
 
-
-
 class VectorSpace:
     def __init__(self, names, vecs):
         self.names = names
@@ -35,4 +33,6 @@ vector_space = VectorSpace.from_glovedata(300, GLOVE_NAMES, GLOVE_VECS)
 def gloveSim(tokens1, tokens2):
     vec1 = vector_space.vec_for_sentence(tokens1)
     vec2 = vector_space.vec_for_sentence(tokens2)
+    if np.isnan(np.sum(vec1)) or np.isnan(np.sum(vec2)):
+        return -5000
     return float(cossim(vec1,vec2))

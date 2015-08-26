@@ -5,36 +5,36 @@
 <body>
     <script>
         $(document).ready(function(){
-            $.ajax({
-                url: 'http://127.0.0.1:5000/spaCy/similarity',
-                contentType: 'application/json;charset=UTF-8',
-                type: 'POST',
-                data: JSON.stringify({
-                    words: [
-                        {'id': 'foo', 'text': 'a bottle of sand'},
-                        {'id': 'bar', 'text': 'big dog'}
-                    ]
-                }),
-                dataType: 'html',
-                success: function(json){
-                    $('#spacySim').html(JSON.stringify(json));
-                }
+            // $.ajax({
+            //     url: 'http://127.0.0.1:5000/spaCy/similarity',
+            //     contentType: 'application/json;charset=UTF-8',
+            //     type: 'POST',
+            //     data: JSON.stringify({
+            //         words: [
+            //             {'id': 'foo', 'text': 'a bottle of sand'},
+            //             {'id': 'bar', 'text': 'big dog'}
+            //         ]
+            //     }),
+            //     dataType: 'html',
+            //     success: function(json){
+            //         $('#spacySim').html(JSON.stringify(json));
+            //     }
 
-            });
+            // });
 
-            $.ajax({
-                url: 'http://127.0.0.1:5000/spaCy/top15/weddingProp',
-                contentType: 'application/json;charset=UTF-8',
-                type: 'POST',
-                data: JSON.stringify({
-                    word: {'id': 'foo', 'text': 'hat'}
-                }),
-                dataType: 'html',
-                success: function(json){
-                    $('#spacyTop15').html(JSON.stringify(json));
-                }
+            // $.ajax({
+            //     url: 'http://127.0.0.1:5000/spaCy/top15/weddingProp',
+            //     contentType: 'application/json;charset=UTF-8',
+            //     type: 'POST',
+            //     data: JSON.stringify({
+            //         word: {'id': 'foo', 'text': 'hat'}
+            //     }),
+            //     dataType: 'html',
+            //     success: function(json){
+            //         $('#spacyTop15').html(JSON.stringify(json));
+            //     }
 
-            });
+            // });
 
             $.ajax({
                 url: 'http://127.0.0.1:5000/GloVe/similarity',
@@ -42,7 +42,7 @@
                 type: 'POST',
                 data: JSON.stringify({
                     words: [
-                        {'id': 'foo', 'text': 'a bottle of sand'},
+                        {'id': 'foo', 'text': 'smile'},
                         {'id': 'bar', 'text': 'big dog'}
                     ]
                 }),
