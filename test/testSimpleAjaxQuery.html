@@ -66,6 +66,19 @@
                 }
 
             });
+            $.ajax({
+                url: 'http://127.0.0.1:5000/GloVe/simSet/weddingProp',
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                data: JSON.stringify({
+                    word: {'id': 'foo', 'text': 'hat'}
+                }),
+                dataType: 'html',
+                success: function(json){
+                    $('#gloveSimSet').html(JSON.stringify(json));
+                }
+
+            });
 
 
 
@@ -85,6 +98,9 @@
             </div>
         <h2>Top15</h2>
             <div id='gloveTop15'>
+            </div>
+        <h2>SimSet</h2>
+            <div id='gloveSimSet'>
             </div>
 
 </body>
