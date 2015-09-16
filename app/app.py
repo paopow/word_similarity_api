@@ -96,7 +96,7 @@ def get_sim_set(word, vocab_list, topic, func):
     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
     most_similar = [i for i in reversed(sim_vec[-15:])]
     most_different = sim_vec[:15]
-    max_itr = 150
+    max_itr = 455
     sim_sets = []
     count = 0
     for t in combinations(most_similar,3):
