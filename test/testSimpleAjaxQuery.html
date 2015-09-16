@@ -37,7 +37,7 @@
             // });
 
             $.ajax({
-                url: 'http://127.0.0.1:5000/GloVe/similarity',
+                url: 'http://wordsim.iis-dev.seas.harvard.edu/GloVe/similarity',
                 contentType: 'application/json;charset=UTF-8',
                 type: 'POST',
                 data: JSON.stringify({
@@ -54,7 +54,7 @@
             });
 
             $.ajax({
-                url: 'http://127.0.0.1:5000/GloVe/top15/weddingProp',
+                url: 'http://wordsim.iis-dev.seas.harvard.edu/GloVe/top15/weddingProp',
                 contentType: 'application/json;charset=UTF-8',
                 type: 'POST',
                 data: JSON.stringify({
