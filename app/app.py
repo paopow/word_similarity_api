@@ -104,9 +104,9 @@ def get_sim_set(word, vocab_list, topic, func):
             sim_sets.append(t)
             if len(sim_sets) >= 5:
                 break
-        if count > max_itr:
-            break
-        count += 1
+        # if count > max_itr:
+        #     break
+        # count += 1
 
     diff_sets = []
     count = 0
@@ -115,9 +115,9 @@ def get_sim_set(word, vocab_list, topic, func):
             diff_sets.append(t)
             if len(diff_sets) >= 5:
                 break
-        if count > max_itr:
-            break
-        count += 1
+        # if count > max_itr:
+        #     break
+        # count += 1
 
     return jsonify(
             word = word,
