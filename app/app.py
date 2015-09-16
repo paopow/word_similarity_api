@@ -89,28 +89,35 @@ def is_diverse_in_range(triple, topic, func):
     w23_in_range = (w23_sim >= lower_bound and w23_sim <= upper_bound)
     return (w12_in_range and w23_in_range and w13_in_range)
 
+from itertools import combinations
 def get_sim_set(word, vocab_list, topic, func):
     sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
         for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
     most_similar = [i for i in reversed(sim_vec[-15:])]
     most_different = sim_vec[:15]
-    max_itr = 1000
+    max_itr = 150
     sim_sets = []
-    for i in range(max_itr):
-        to_consider = random.sample(most_similar,3)
-        if is_diverse_in_range(to_consider, topic, func):
-            sim_sets.append(to_consider)
+    count = 0
+    for t in combinations(most_similar,3):
+        if is_diverse_in_range(t, topic, func):
+            sim_sets.append(t)
             if len(sim_sets) >= 5:
                 break
+        if count > max_itr:
+            break
+        count += 1
 
     diff_sets = []
-    for i in range(max_itr):
-        to_consider = random.sample(most_different,3)
-        if is_diverse_in_range(to_consider, topic, func):
-            diff_sets.append(to_consider)
+    count = 0
+    for t in combinations(most_similar,3):
+        if is_diverse_in_range(t, topic, func):
+            diff_sets.append(t)
             if len(diff_sets) >= 5:
                 break
+        if count > max_itr:
+            break
+        count += 1
 
     return jsonify(
             word = word,
