@@ -101,7 +101,7 @@ def get_sorted_similar(word, vocab_list, func):
     return for_sim
 
 
-SET_SIZE = 3
+SET_SIZE = 1
 def _get_sim_set(word, vocab_list, topic, func):
     sim_vec = get_sorted_similar(word, vocab_list, func)
     sim_candidates = sim_vec[-15:]
