@@ -47,10 +47,12 @@ def get_glove_sim():
 def get_top15(word, vocab_list, func):
     sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
         for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
+
     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
+    for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
     return jsonify(
             word = word,
-            similar = [i for i in reversed(sim_vec[-15:])],
+            similar = [i for i in reversed(for_sim[-15:])],
             different = sim_vec[:15])
 
 
