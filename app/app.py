@@ -91,41 +91,65 @@ def is_diverse_in_range(triple, topic, func):
     w23_in_range = (w23_sim >= lower_bound and w23_sim <= upper_bound)
     return (w12_in_range and w23_in_range and w13_in_range)
 
-from itertools import combinations
-def get_sim_set(word, vocab_list, topic, func):
+
+
+def get_sorted_similar(word, vocab_list, func):
     sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
         for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
-    most_similar = [i for i in reversed(sim_vec[-15:])]
-    most_different = sim_vec[:15]
-    max_itr = 455
+    for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
+    return for_sim
+
+
+SET_SIZE = 3
+def _get_sim_set(word, vocab_list, topic, func):
+    sim_vec = get_sorted_similar(word, vocab_list, func)
+    sim_candidates = sim_vec[-15:]
+
+    max_itr = 100
+    sim_set = None
+    for i in range(max_itr):
+        t1,t2 = random.sample(sim_candidates,2)
+        w1 = t1['text']
+        w2 = t2['text']
+        if func(w1, w2) < 0.5:
+            sim_set = [t1,t2]
+
+    return sim_set
+
+
+
+
+from itertools import combinations
+def get_sim_set(word, vocab_list, topic, func):
+    sim_vec = get_sorted_similar(word, vocab_list, func)
+    sim_candidates = sim_vec[-15:]
+    diff_candidates = sim_vec[:15]
+
+    max_itr = 100
     sim_sets = []
-    count = 0
-    for t in combinations(most_similar,3):
-        if is_diverse_in_range(t, topic, func):
-            sim_sets.append(t)
-            if len(sim_sets) >= 5:
-                break
-        # if count > max_itr:
-        #     break
-        # count += 1
+    for i in range(max_itr):
+        t1,t2,t3 = random.sample(sim_candidates,3)
+        w1 = t1['text']
+        w2 = t2['text']
+        w3 = t3['text']
+        if func(w1, w2) < 0.5 and func(w1,w3) < 0.5 and func(w2,w3) < 0.5:
+            sim_sets.append([t1,t2,t3])
+
+        if len(sim_sets) > SET_SIZE:
+            break
 
     diff_sets = []
-    count = 0
-    for t in combinations(most_similar,3):
-        if is_diverse_in_range(t, topic, func):
-            diff_sets.append(t)
-            if len(diff_sets) >= 5:
-                break
-        # if count > max_itr:
-        #     break
-        # count += 1
-
+    diff_start_points = random.sample(diff_candidates, SET_SIZE + 5)
+    for s in diff_start_points:
+        buddies = _get_sim_set(s['text'],vocab_list, topic, func)
+        if buddies is not None:
+            diff_sets.append([s,buddies[0], buddies[1]])
+        if len(diff_sets) > SET_SIZE:
+            break
     return jsonify(
             word = word,
-            similar = most_similar,
             similar_set = sim_sets,
-            different = most_different,
             different_set = diff_sets)
 
 
