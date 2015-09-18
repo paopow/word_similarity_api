@@ -88,30 +88,32 @@ def get_glove_sim_set(topic):
 
     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
     for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
-    similar_words = [i for i in reversed(for_sim[-5:])]
-    different_words = sim_vec[:5]
-
+    operation = data['operation']
     similar_sets = []
-    for s in similar_words:
-        s_idx = vocab_list.index((s['id'], s['text']))
-        tmp = random.choice(this_dict_set['set_dict'][s_idx])
-        tmp = (
-            {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
-            {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
-            {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
-            )
-        similar_sets.append(tmp)
-
     different_sets = []
-    for s in different_words:
-        s_idx = vocab_list.index((s['id'], s['text']))
-        tmp = random.choice(this_dict_set['set_dict'][s_idx])
-        tmp = (
-            {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
-            {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
-            {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
-            )
-        different_sets.append(tmp)
+
+    if operation == 'similar':
+        similar_words = [i for i in reversed(for_sim[-5:])]
+        for s in similar_words:
+            s_idx = vocab_list.index((s['id'], s['text']))
+            tmp = random.choice(this_dict_set['set_dict'][s_idx])
+            tmp = (
+                {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
+                {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
+                {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
+                )
+            similar_sets.append(tmp)
+    else:
+        different_words = sim_vec[:5]
+        for s in different_words:
+            s_idx = vocab_list.index((s['id'], s['text']))
+            tmp = random.choice(this_dict_set['set_dict'][s_idx])
+            tmp = (
+                {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
+                {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
+                {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
+                )
+            different_sets.append(tmp)
 
     return jsonify(
             word = data['word'],
