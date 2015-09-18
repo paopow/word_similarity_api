@@ -2,9 +2,15 @@ from flask import Flask, jsonify, request
 from utils import read_csv, lemmatize_an_idea
 import json, random
 from config import TOPICS
+import pickle
 # from spacySim import spacySim, spacyPhraseSim
 from gloveSim import gloveSim
 
+with open('theme_dict_set.p') as f:
+    theme_dict_set = pickle.load(f)
+
+with open('prop_dict_set.p') as f:
+    prop_dict_set = pickle.load(f)
 
 app = Flask(__name__)
 
@@ -73,8 +79,44 @@ def get_glove_top15(topic):
 @app.route('/GloVe/simSet/<topic>', methods=['GET', 'POST'])
 def get_glove_sim_set(topic):
     data = request.get_json()
-    word = data['word']
-    return get_sim_set(word['text'], topics[topic], topic, gloveSim)
+    word = data['word']['text']
+    func = gloveSim
+    this_dict_set = theme_dict_set if topic=='weddingTheme' else prop_dict_set
+    vocab_list = this_dict_set['words']
+    sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
+        for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
+
+    sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
+    for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
+    similar_words = [i for i in reversed(for_sim[-5:])]
+    different_words = sim_vec[:5]
+
+    similar_sets = []
+    for s in similar_words:
+        s_idx = vocab_list.index((s['id'], s['text']))
+        tmp = random.choice(this_dict_set['set_dict'][s_idx])
+        tmp = (
+            {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
+            {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
+            {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
+            )
+        similar_sets.append(tmp)
+
+    different_sets = []
+    for s in different_words:
+        s_idx = vocab_list.index((s['id'], s['text']))
+        tmp = random.choice(this_dict_set['set_dict'][s_idx])
+        tmp = (
+            {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
+            {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
+            {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
+            )
+        different_sets.append(tmp)
+
+    return jsonify(
+            word = data['word'],
+            similar = similar_sets,
+            different = different_sets)
 
 
 def is_diverse_in_range(triple, topic, func):
