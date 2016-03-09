@@ -63,8 +63,8 @@ def test_glove_func(word, topic, operation):
     # print(different_sets)
 
 if __name__ == '__main__':
-    # cProfile.run("test_glove_func('cowboy', 'weddingTheme', 'similar')")
-    # cProfile.run("test_glove_func('cowboy', 'weddingTheme', 'different')")
+    cProfile.run("test_glove_func('cowboy', 'weddingTheme', 'similar')")
+    cProfile.run("test_glove_func('cowboy', 'weddingTheme', 'different')")
     t = timeit.Timer("test_glove_func('cowboy', 'weddingTheme', 'similar')", setup="from __main__ import test_glove_func")
     t2 = timeit.Timer("test_glove_func('cowboy', 'weddingTheme', 'different')", setup="from __main__ import test_glove_func")
     t3 = timeit.Timer("test_glove_func('hawaii', 'weddingTheme', 'different')", setup="from __main__ import test_glove_func")
