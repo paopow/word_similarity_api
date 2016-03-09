@@ -67,8 +67,10 @@ if __name__ == '__main__':
     # cProfile.run("test_glove_func('cowboy', 'weddingTheme', 'different')")
     t = timeit.Timer("test_glove_func('cowboy', 'weddingTheme', 'similar')", setup="from __main__ import test_glove_func")
     t2 = timeit.Timer("test_glove_func('cowboy', 'weddingTheme', 'different')", setup="from __main__ import test_glove_func")
+    t3 = timeit.Timer("test_glove_func('hawaii', 'weddingTheme', 'different')", setup="from __main__ import test_glove_func")
     print t.timeit(1)
-    print t2.timeit(2)
+    print t2.timeit(1)
+    print t3.timeit(1)
     # timeit.timeit("test_glove_func('cowboy', 'weddingTheme', 'different')")
 
 
