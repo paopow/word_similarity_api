@@ -20,6 +20,7 @@ topics = {}
 for k,v in TOPICS.iteritems():
     topics[k] = [(w[0], w[1].lower()) for w in read_csv(v)]
 
+# --- This is also hacky
 TOPIC_STAT = {
     'weddingTheme': {
         'sim_mean': 0.111250152359,
@@ -83,7 +84,7 @@ def get_glove_sim_set(topic):
     func = gloveSim
     this_dict_set = theme_dict_set if topic=='weddingTheme' else prop_dict_set
     vocab_list = this_dict_set['words']
-    sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
+    sim_vec = [{'id':w[0], 'text':w[1], 'similarity':func(word,w[1])}
         for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
 
     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])

@@ -67,11 +67,12 @@
 
             // });
             $.ajax({
-                url: 'http://wordsim.iis-dev.seas.harvard.edu/GloVe/simSet/weddingProp',
+                url: 'http://wordsim2.iis-dev.seas.harvard.edu/GloVe/simSet/weddingProp',
                 contentType: 'application/json;charset=UTF-8',
                 type: 'POST',
                 data: JSON.stringify({
-                    word: {'id': 'foo', 'text': 'hat'}
+                    word: {'id': 'foo', 'text': 'hat'},
+                    operation: 'similar'
                 }),
                 dataType: 'html',
                 success: function(json){
