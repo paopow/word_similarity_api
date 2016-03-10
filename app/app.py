@@ -33,6 +33,7 @@ TOPIC_STAT = {
 
 }
 
+
 # @app.route('/spaCy/similarity', methods=['GET', 'POST'])
 # def get_spacy_sim():
 #     data = request.get_json()

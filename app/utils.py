@@ -5,6 +5,8 @@ from nltk.corpus import stopwords
 import csv
 stoplist = stopwords.words('english')
 
+lemma_dict = {}
+
 def cossim(a, b):
     return dot(a, b) / (norm(a) * norm(b))
 
@@ -20,10 +22,13 @@ def read_csv(filename, has_header = True):
     return items
 
 def lemmatize_an_idea(idea, use_stoplist=True):
+    if idea in lemma_dict:
+        return lemma_dict[idea]
     if use_stoplist:
         lemm = [lem[:-3] for lem in lemmatize(idea) if lem[:-3] not in stoplist]
     else:
         lemm = [lem[:-3] for lem in lemmatize(idea) if lem[:-3]]
+    lemma_dict[idea] = lemm
     return lemm
 
 def lemmatize_ideas(ideas):
