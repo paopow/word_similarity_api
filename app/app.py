@@ -4,7 +4,8 @@ import json, random
 from config import TOPICS
 import pickle
 # from spacySim import spacySim, spacyPhraseSim
-from gloveSim import gloveSim
+# from gloveSim import gloveSim
+from lsaSim import rank_paths
 
 with open('theme_dict_set.p') as f:
     theme_dict_set = pickle.load(f)
@@ -41,27 +42,33 @@ TOPIC_STAT = {
 #     return jsonify(
 #             words = words,
 #             similarity = spacyPhraseSim(words[0]['text'], words[1]['text']))
-
-
-@app.route('/GloVe/similarity', methods=['GET', 'POST'])
-def get_glove_sim():
+@app.route('/LSArank', methods=['GET', 'POST'])
+def get_sim_ranks():
     data = request.get_json()
-    words = data['words']
+    ideas = data['ideas']
+    ideaBag = " ".join(ideas)
     return jsonify(
-            words = words,
-            similarity = gloveSim(words[0]['text'], words[1]['text']))
+            rankings = rank_paths(ideaBag))
+
+# @app.route('/GloVe/similarity', methods=['GET', 'POST'])
+# def get_glove_sim():
+#     data = request.get_json()
+#     words = data['words']
+#     return jsonify(
+#             words = words,
+#             similarity = gloveSim(words[0]['text'], words[1]['text']))
 
 
-def get_top15(word, vocab_list, func):
-    sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
-        for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
+# def get_top15(word, vocab_list, func):
+#     sim_vec = [{'id':w[0], 'text': w[1], 'similarity': func(word,w[1])}
+#         for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
 
-    sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
-    for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
-    return jsonify(
-            word = word,
-            similar = [i for i in reversed(for_sim[-15:])],
-            different = sim_vec[:15])
+#     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
+#     for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
+#     return jsonify(
+#             word = word,
+#             similar = [i for i in reversed(for_sim[-15:])],
+#             different = sim_vec[:15])
 
 
 # @app.route('/spaCy/top15/<topic>', methods=['GET', 'POST'])
@@ -71,56 +78,56 @@ def get_top15(word, vocab_list, func):
 #     return get_top15(word['text'], topics[topic], spacyPhraseSim)
 
 
-@app.route('/GloVe/top15/<topic>', methods=['GET', 'POST'])
-def get_glove_top15(topic):
-    data = request.get_json()
-    word = data['word']
-    return get_top15(word['text'], topics[topic], gloveSim)
+# @app.route('/GloVe/top15/<topic>', methods=['GET', 'POST'])
+# def get_glove_top15(topic):
+#     data = request.get_json()
+#     word = data['word']
+#     return get_top15(word['text'], topics[topic], gloveSim)
 
 
-@app.route('/GloVe/simSet/<topic>', methods=['GET', 'POST'])
-def get_glove_sim_set(topic):
-    data = request.get_json()
-    word = data['word']['text']
-    func = gloveSim
-    this_dict_set = theme_dict_set if topic=='weddingTheme' else prop_dict_set
-    vocab_list = this_dict_set['words']
-    sim_vec = [{'id':w[0], 'text':w[1], 'similarity':func(word,w[1])}
-        for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
+# @app.route('/GloVe/simSet/<topic>', methods=['GET', 'POST'])
+# def get_glove_sim_set(topic):
+#     data = request.get_json()
+#     word = data['word']['text']
+#     func = gloveSim
+#     this_dict_set = theme_dict_set if topic=='weddingTheme' else prop_dict_set
+#     vocab_list = this_dict_set['words']
+#     sim_vec = [{'id':w[0], 'text':w[1], 'similarity':func(word,w[1])}
+#         for w in vocab_list if ' '.join(lemmatize_an_idea(w[1])) != ' '.join(lemmatize_an_idea(word)) and func(word,w[1]) > -100]
 
-    sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
-    for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
-    operation = data['operation']
-    similar_sets = []
-    different_sets = []
+#     sim_vec = sorted(sim_vec, key=lambda t: t['similarity'])
+#     for_sim = [t for t in sim_vec if t['similarity'] < 0.5]
+#     operation = data['operation']
+#     similar_sets = []
+#     different_sets = []
 
-    if operation == 'similar':
-        similar_words = [i for i in reversed(for_sim[-5:])]
-        for s in similar_words:
-            s_idx = vocab_list.index((s['id'], s['text']))
-            tmp = random.choice(this_dict_set['set_dict'][s_idx])
-            tmp = (
-                {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
-                {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
-                {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
-                )
-            similar_sets.append(tmp)
-    else:
-        different_words = sim_vec[:5]
-        for s in different_words:
-            s_idx = vocab_list.index((s['id'], s['text']))
-            tmp = random.choice(this_dict_set['set_dict'][s_idx])
-            tmp = (
-                {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
-                {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
-                {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
-                )
-            different_sets.append(tmp)
+#     if operation == 'similar':
+#         similar_words = [i for i in reversed(for_sim[-5:])]
+#         for s in similar_words:
+#             s_idx = vocab_list.index((s['id'], s['text']))
+#             tmp = random.choice(this_dict_set['set_dict'][s_idx])
+#             tmp = (
+#                 {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
+#                 {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
+#                 {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
+#                 )
+#             similar_sets.append(tmp)
+#     else:
+#         different_words = sim_vec[:5]
+#         for s in different_words:
+#             s_idx = vocab_list.index((s['id'], s['text']))
+#             tmp = random.choice(this_dict_set['set_dict'][s_idx])
+#             tmp = (
+#                 {'id': vocab_list[tmp[0]][0], 'text': vocab_list[tmp[0]][1]},
+#                 {'id': vocab_list[tmp[1]][0], 'text': vocab_list[tmp[1]][1]},
+#                 {'id': vocab_list[tmp[2]][0], 'text': vocab_list[tmp[2]][1]},
+#                 )
+#             different_sets.append(tmp)
 
-    return jsonify(
-            word = data['word'],
-            similar = similar_sets,
-            different = different_sets)
+#     return jsonify(
+#             word = data['word'],
+#             similar = similar_sets,
+#             different = different_sets)
 
 
 def is_diverse_in_range(triple, topic, func):
