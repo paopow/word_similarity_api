@@ -50,6 +50,10 @@ def get_sim_ranks():
     return jsonify(
             rankings = rank_paths(ideaBag))
 
+@app.route('/hello', methods=['GET', 'POST'])
+def hello_world():
+    return "Hello world!"
+
 # @app.route('/GloVe/similarity', methods=['GET', 'POST'])
 # def get_glove_sim():
 #     data = request.get_json()
@@ -209,4 +213,4 @@ def get_sim_set(word, vocab_list, topic, func):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
